@@ -9,6 +9,7 @@ app = Flask(__name__)
 load_dotenv()
 
 # Select environment based on the ENV environment variable
+#Loading some configuration
 if os.getenv('ENV') == 'local':
     print("Running in local mode")
     app.config.from_object('config.LocalConfig')
@@ -26,7 +27,7 @@ else:
 db = SQLAlchemy(app)
 
 from iebank_api.models import Account
-db.create_all()
+db.create_all() #This line creates a database
 CORS(app)
 
 from iebank_api import routes

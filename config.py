@@ -9,14 +9,15 @@ class Config(object):
 
 class LocalConfig(Config):
     basedir = os.path.abspath(os.path.dirname(__file__))
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir,'.db', 'local.db')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///local.db'
     DEBUG = True
 
 class GithubCIConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
     DEBUG = True
 
-class DevelopmentConfig(Config):
+#When running in Azure environment, use this variables
+class DevelopmentConfig(Config): 
     SQLALCHEMY_DATABASE_URI = 'postgresql://{dbuser}:{dbpass}@{dbhost}/{dbname}'.format(
     dbuser=os.getenv('DBUSER'),
     dbpass=os.getenv('DBPASS'),
@@ -24,3 +25,6 @@ class DevelopmentConfig(Config):
     dbname=os.getenv('DBNAME')
     )
     DEBUG = True
+
+class ProductionConfig(Config):
+  DEBUG = False
