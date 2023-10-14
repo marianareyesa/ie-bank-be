@@ -9,7 +9,17 @@ def hello_world():
 
 @app.route('/skull', methods=['GET'])
 def skull():
-    return 'Hi! This is the BACKEND SKULL! 💀'
+    text = 'Hi! This is the BACKEND SKULL! 💀 '
+    text = text +'<br/>Database URL:' + db.engine.url.database
+    if db.engine.url.host:
+        text = text +'<br/>Database host:' + db.engine.url.host
+    if db.engine.url.port:
+        text = text +'<br/>Database port:' + db.engine.url.port
+    if db.engine.url.username:
+        text = text +'<br/>Database user:' + db.engine.url.username
+    if db.engine.url.password:
+        text = text +'<br/>Database password:' + db.engine.url.password
+    return text
 
 
 @app.route('/accounts', methods=['POST'])

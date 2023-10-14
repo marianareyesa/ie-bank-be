@@ -14,3 +14,31 @@ def test_create_account():
     assert account.balance == 0.0
     assert account.status == 'Active'
     assert account.country == 'Spain'
+
+def test_account_initial_balance():
+    """
+    GIVEN an Account model
+    WHEN a new Account is created without specifying an initial balance
+    THEN the initial balance should be set to 0.0
+    """
+    account = Account('John Doe', '$', 'Spain')
+    assert account.balance == 0.0
+
+def test_account_update_balance():
+    """
+    GIVEN an Account model
+    WHEN the balance of an Account is updated
+    THEN the updated balance should be reflected correctly
+    """
+    account = Account('John Doe', '$', 'Spain')
+    # Set an initial balance
+    account.balance = 100.0
+    assert account.balance == 100.0
+
+    # Update the balance
+    account.balance += 100.0
+    assert account.balance == 200.0
+
+    # Deduct an amount from the balance
+    account.balance -= 100.0
+    assert account.balance == 100.0
