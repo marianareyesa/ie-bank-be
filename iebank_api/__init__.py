@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
-# from applicationinsights.flask.ext import AppInsights
+from applicationinsights.flask.ext import AppInsights
 
 app = Flask(__name__)
 
@@ -20,6 +20,9 @@ elif os.getenv('ENV') == 'dev':
 elif os.getenv('ENV') == 'ghci':
     print("Running in github mode")
     app.config.from_object('config.GithubCIConfig')
+elif os.getenv('ENV') == 'uat':
+    print("Running in UAT mode")
+    app.config.from_object('config.UATConfig')
 else:
     print("Running in production mode")
     app.config.from_object('config.ProductionConfig')
@@ -35,10 +38,10 @@ CORS(app)
 
 from iebank_api import routes
 
-#Initialize application insights and force fllushing application insights
-#if(os.getenv('ENV') == 'dev'):
- #   appinsights = AppInsights(app)
-  #  @app.after_request
-   # def after_request(response):
-    #    appinsights.flush()
-     #   return response
+# Initialize Application Insights and force flushing application insights handler after each request
+if(os.getenv('ENV') == 'dev' or os.getenv('ENV') == 'uat'):
+    appinsights = AppInsights(app)
+    @app.after_request
+    def after_request(response):
+        appinsights.flush()
+        return response
