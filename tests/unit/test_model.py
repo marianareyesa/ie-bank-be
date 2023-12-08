@@ -7,13 +7,14 @@ def test_create_account():
     WHEN a new Account is created
     THEN check the name, account_number, balance, currency, status and created_at fields are defined correctly
     """
-    account = Account('John Doe', '€', 'Spain')
+    account = Account('John Doe', '€', 'Spain', '1234')
     assert account.name == 'John Doe'
     assert account.currency == '€'
     assert account.account_number != None
     assert account.balance == 0.0
     assert account.status == 'Active'
     assert account.country == 'Spain'
+    assert account.password == '1234'
 
 def test_account_initial_balance():
     """
@@ -21,7 +22,7 @@ def test_account_initial_balance():
     WHEN a new Account is created without specifying an initial balance
     THEN the initial balance should be set to 0.0
     """
-    account = Account('John Doe', '$', 'Spain')
+    account = Account('John Doe', '$', 'Spain', '1234')
     assert account.balance == 0.0
 
 def test_account_update_balance():
@@ -30,7 +31,7 @@ def test_account_update_balance():
     WHEN the balance of an Account is updated
     THEN the updated balance should be reflected correctly
     """
-    account = Account('John Doe', '$', 'Spain')
+    account = Account('John Doe', '$', 'Spain','1234')
     # Set an initial balance
     account.balance = 100.0
     assert account.balance == 100.0

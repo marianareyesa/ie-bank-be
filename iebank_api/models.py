@@ -11,14 +11,16 @@ class Account(db.Model):
     country = db.Column(db.String(32), nullable=False, default="Spain")
     status = db.Column(db.String(10), nullable=False, default="Active")
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    password = db.Column(db.String(32), nullable=False)
 
     def __repr__(self):
         return '<Event %r>' % self.account_number
 
-    def __init__(self, name, currency, country):
+    def __init__(self, name, currency, country, password):
         self.name = name
         self.account_number = ''.join(random.choices(string.digits, k=20))
         self.currency = currency
         self.balance = 0.0
         self.status = "Active"
         self.country = country
+        self.password = password
