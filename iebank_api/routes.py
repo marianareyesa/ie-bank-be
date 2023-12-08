@@ -57,6 +57,16 @@ def delete_account(id):
     db.session.commit()
     return format_account(account)
 
+@app.route('/userlogin', methods=['POST'])
+def log_in():
+    name = request.json['name']
+    password = request.json['password']
+    account = Account.query.filter_by(name = name).first()
+    if name == account.name and password == account.password:
+        return format_account(account)
+    else:
+        return ('Wrong credentials)')
+
 def format_account(account):
     return {
         'id': account.id,
