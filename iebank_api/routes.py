@@ -1,6 +1,7 @@
-from flask import Flask, request
+from flask import Flask, jsonify,request
 from iebank_api import db, app
 from iebank_api.models import Account
+import json
 
 
 @app.route('/')
@@ -62,10 +63,62 @@ def log_in():
     name = request.json['name']
     password = request.json['password']
     account = Account.query.filter_by(name = name).first()
-    if name == account.name and password == account.password:
+    if account and name == account.name and password == account.password:
         return format_account(account)
     else:
-        return ('Wrong credentials)')
+        return 'Wrong credentials'
+
+@app.route('/upage/<string:username>', methods=['GET'])
+def get_user_by_username(username):
+    account = Account.query.filter_by(name=username).first()
+    print(account.name)
+    if account:
+        user_data = {
+            'name': account.name,
+            'accounts': [
+                {
+                    'id': account.id,
+                    'balance': account.balance,
+                    # Other account details
+                }
+            ]
+        }
+        return jsonify(user_data)
+    else:
+        return jsonify({'message': 'User not found'}), 404
+
+@app.route('/transaction', methods=['POST'])
+def transaction_handler():
+    name = request.json['name']
+    amount= request.json['amount']
+    amount= float(amount)
+    receiver= request.json['receiver']
+    try:
+        # Fetch sender's account
+        sender_account = Account.query.filter_by(name=name).first()
+
+        # Fetch receiver's account
+        receiver_account = Account.query.filter_by(name=receiver).first()
+
+        if sender_account is None or receiver_account is None:
+            return jsonify({'message': 'Invalid sender or receiver'}), 404
+
+        # Check if the sender has enough balance
+        if sender_account.balance < amount:
+            return jsonify({'message': 'Insufficient balance'}), 400
+
+        # Perform the transaction
+        sender_account.balance -= amount
+        receiver_account.balance += amount
+
+        # Update the database
+        db.session.commit()
+
+        return jsonify({'message': 'Transaction successful'})
+    except Exception as e:
+        # Handle any other exceptions
+        print(str(e))
+        return jsonify({'message': 'Error processing transaction'}), 500
 
 def format_account(account):
     return {
