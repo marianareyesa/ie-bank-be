@@ -24,3 +24,5 @@ class Account(db.Model):
         self.status = "Active"
         self.country = country
         self.password = password
+        
+# Compare this snippet from ie-bank-be/iebank_api/__init__.py:
