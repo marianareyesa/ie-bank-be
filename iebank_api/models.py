@@ -12,6 +12,8 @@ class Account(db.Model):
     status = db.Column(db.String(10), nullable=False, default="Active")
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     password = db.Column(db.String(32), nullable=False)
+    
+  
 
     def __repr__(self):
         return '<Event %r>' % self.account_number
@@ -24,4 +26,20 @@ class Account(db.Model):
         self.status = "Active"
         self.country = country
         self.password = password
-# Compare this snippet from ie-bank-be/iebank_api/__init__.py:
+
+
+class Transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, nullable=False)
+    receiver_id = db.Column(db.Integer, nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    
+   
+
+    def __repr__(self):
+        return f'Transaction {self.id}'
+
+    def __init__(self, sender_id, receiver_id, amount):
+        self.sender_id = sender_id
+        self.receiver_id = receiver_id
+        self.amount = amount

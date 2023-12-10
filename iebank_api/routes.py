@@ -1,6 +1,6 @@
 from flask import Flask, jsonify,request
 from iebank_api import db, app
-from iebank_api.models import Account
+from iebank_api.models import Account, Transaction
 import json
 
 
@@ -93,6 +93,11 @@ def transaction_handler():
     amount= request.json['amount']
     amount= float(amount)
     receiver= request.json['receiver']
+    print("***")
+    print(name)
+    print(amount)
+    print(receiver)
+    print("***")
     try:
         # Fetch sender's account
         sender_account = Account.query.filter_by(name=name).first()
@@ -110,15 +115,66 @@ def transaction_handler():
         # Perform the transaction
         sender_account.balance -= amount
         receiver_account.balance += amount
-
-        # Update the database
+        db.session.commit()
+        # Create a new transaction record
+        transaction = Transaction(
+            sender_id=sender_account.id,
+            receiver_id=receiver_account.id,
+            amount=amount
+        )
+        db.session.add(transaction)
         db.session.commit()
 
-        return jsonify({'message': 'Transaction successful'})
+        # Add the transaction to sender's transactions
+        
+
+        # Update the database
+        
+        transactions = Transaction.query.filter(Transaction.sender_id == sender_account.id).all()
+        
+        # Print receiver's transactions
+        
+        
+        transaction_data = []
+        for transaction in transactions:
+            sender = Account.query.get(transaction.sender_id)
+            receiver = Account.query.get(transaction.receiver_id)
+            transaction_data.append({
+                'sender': sender.name,
+                'receiver': receiver.name,
+                'amount': transaction.amount,
+            })
+
+        # Return the list of transactions to the front end
+        return jsonify({'message': 'Transaction successful', 'transactions': transaction_data})
     except Exception as e:
         # Handle any other exceptions
         print(str(e))
         return jsonify({'message': 'Error processing transaction'}), 500
+
+@app.route('/transaction-history/<string:username>', methods=['GET'])
+def get_transaction_history(username):
+    sender_account = Account.query.filter_by(name=username).first()
+    if sender_account:
+        # Filter transactions where the sender is the specified user
+        transactions = Transaction.query.filter_by(sender_id=sender_account.id).all()
+
+        transaction_data = []
+        for transaction in transactions:
+            receiver = Account.query.get(transaction.receiver_id)
+            transaction_data.append({
+                'sender': username,
+                'receiver': receiver.name,
+                'amount': transaction.amount,
+                # Include other relevant transaction details
+            })
+
+        return jsonify({'transactions': transaction_data})
+    else:
+        return jsonify({'message': 'User not found or no transactions'}), 404
+
+
+
 
 def format_account(account):
     return {
