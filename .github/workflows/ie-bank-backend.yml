@@ -12,9 +12,9 @@ permissions:
   id-token: write
 
 env:
-  BACKEND_WEBAPP_DEV: team3-be-dev
-  BACKEND_WEBAPP_UAT: team3-be-uat
-  BACKEND_WEBAPP_PROD: team3-be-prod
+  BACKEND_WEBAPP_DEV: team3m-be-dev
+  BACKEND_WEBAPP_UAT: team3m-be-uat
+  BACKEND_WEBAPP_PROD: team3m-be-prod
   source_branch_name: ${{ github.ref }}
   pr_target_branch_name: ${{ github.base_ref }}
 
